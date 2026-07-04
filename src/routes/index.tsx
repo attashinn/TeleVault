@@ -1,18 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  CheckCircle2,
-  CloudUpload,
-  Fingerprint,
   Github,
-  Layers,
-  Sparkles,
-  Users,
-  Zap,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { HeroSection, LogosSection } from "@/components/ui/hero-1";
+import CombinedFeaturedSection from "@/components/ui/combined-featured-section";
+import { WorldMap } from "@/components/ui/map";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -23,8 +19,10 @@ function Landing() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
       <main>
-        <Hero />
-        <Features />
+        <HeroSection />
+        <LogosSection />
+        <CombinedFeaturedSection />
+        <GlobalNetwork />
         <ShowcaseStrip />
         <CTA />
       </main>
@@ -35,21 +33,31 @@ function Landing() {
 
 function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+    <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
-        <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-          <a href="#features" className="hover:text-foreground">Features</a>
-          <a href="#showcase" className="hover:text-foreground">Product</a>
-          <a href="#pricing" className="hover:text-foreground">Pricing</a>
-          <a href="#docs" className="hover:text-foreground">Docs</a>
+        <nav className="hidden items-center gap-2 text-sm text-muted-foreground md:flex">
+          {[
+            { label: "Features", href: "#features" },
+            { label: "Product", href: "#showcase" },
+            { label: "Pricing", href: "#pricing" },
+            { label: "Docs", href: "#docs" },
+          ].map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="rounded-full px-3 py-1.5 transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
         <div className="flex items-center gap-1.5">
           <ThemeToggle />
-          <Button asChild variant="ghost" size="sm" className="rounded-xl">
+          <Button asChild variant="ghost" size="sm" className="rounded-full">
             <Link to="/login">Sign in</Link>
           </Button>
-          <Button asChild size="sm" className="rounded-xl">
+          <Button asChild size="sm" className="rounded-full">
             <Link to="/signup">
               Get started <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>
@@ -60,46 +68,54 @@ function SiteHeader() {
   );
 }
 
-function Hero() {
+
+
+function GlobalNetwork() {
   return (
-    <section className="relative overflow-hidden border-b border-border">
-      <div className="absolute inset-0 -z-10 grid-bg opacity-70" />
-      <div className="absolute left-1/2 top-0 -z-10 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-brand/20 blur-[120px]" />
-
-      <div className="mx-auto max-w-7xl px-6 pb-24 pt-20 md:pt-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-xs text-muted-foreground shadow-soft">
-            <Sparkles className="h-3.5 w-3.5 text-brand" />
-            Now in private beta — invitations rolling out weekly
-          </div>
-          <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
-            A calmer home for{" "}
-            <span className="font-display italic text-brand">everything</span> your team ships.
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-            TeleVault is a modern cloud workspace where files, folders, and collaborators
-            live together — with the polish of Linear and the depth of Drive.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" className="rounded-xl">
-              <Link to="/signup">
-                Start for free <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="ghost" className="rounded-xl">
-              <a href="#features">See how it works</a>
-            </Button>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-            35 GB free · No credit card required · Cancel any time
-          </p>
-        </div>
-
-        <div className="relative mx-auto mt-16 max-w-5xl">
-          <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-brand/30 via-brand/5 to-transparent blur-2xl" />
-          <div className="glass rounded-3xl p-2 shadow-elevated">
-            <MockDashboard />
-          </div>
+    <section className="relative overflow-hidden border-b border-border/70 bg-gradient-to-b from-background via-background to-muted/20 py-12 xs:py-16 sm:py-24">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,oklch(var(--brand)/0.12),transparent_55%)]" />
+      <div className="mx-auto max-w-6xl px-3 xs:px-4 sm:px-6 lg:px-8 text-center">
+        <p className="mb-2 xs:mb-3 text-[10px] xs:text-xs font-medium uppercase tracking-[0.2em] xs:tracking-[0.24em] text-brand">
+          Powered by Telegram
+        </p>
+        <h2 className="text-2xl xs:text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+          Store anywhere. <span className="font-display italic text-muted-foreground">Access everywhere.</span>
+        </h2>
+        <p className="mx-auto max-w-2xl py-3 xs:py-4 text-xs xs:text-sm sm:text-lg leading-6 sm:leading-7 text-muted-foreground">
+          TeleVault uses Telegram's global infrastructure to store your files — giving you
+          rock-solid reliability and instant access from any device, anywhere in the world.
+        </p>
+      </div>
+      <div className="mx-auto mt-6 xs:mt-8 max-w-6xl px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div className="overflow-hidden rounded-lg xs:rounded-xl lg:rounded-[1.75rem] border border-border/70 bg-background/70 p-2 xs:p-3 shadow-soft backdrop-blur">
+          <WorldMap
+          dots={[
+            {
+              start: { lat: 64.2008, lng: -149.4937, label: "Fairbanks" },
+              end: { lat: 34.0522, lng: -118.2437, label: "Los Angeles" },
+            },
+            {
+              start: { lat: 64.2008, lng: -149.4937, label: "Fairbanks" },
+              end: { lat: -15.7975, lng: -47.8919, label: "Brasília" },
+            },
+            {
+              start: { lat: -15.7975, lng: -47.8919, label: "Brasília" },
+              end: { lat: 38.7223, lng: -9.1393, label: "Lisbon" },
+            },
+            {
+              start: { lat: 51.5074, lng: -0.1278, label: "London" },
+              end: { lat: 28.6139, lng: 77.209, label: "New Delhi" },
+            },
+            {
+              start: { lat: 28.6139, lng: 77.209, label: "New Delhi" },
+              end: { lat: 43.1332, lng: 131.9113, label: "Vladivostok" },
+            },
+            {
+              start: { lat: 28.6139, lng: 77.209, label: "New Delhi" },
+              end: { lat: -1.2921, lng: 36.8219, label: "Nairobi" },
+            },
+          ]}
+          />
         </div>
       </div>
     </section>
@@ -149,65 +165,77 @@ function MockDashboard() {
   );
 }
 
-const features = [
-  {
-    icon: CloudUpload,
-    title: "Effortless uploads",
-    desc: "Drag, drop, resume. TeleVault handles files up to 50 GB with graceful retries.",
-  },
-  {
-    icon: Fingerprint,
-    title: "End-to-end privacy",
-    desc: "Your data is encrypted at rest and in transit. You own the keys. Always.",
-  },
-  {
-    icon: Users,
-    title: "Built for teams",
-    desc: "Shared spaces, granular roles, and comments that live next to the file.",
-  },
-  {
-    icon: Layers,
-    title: "Organized by design",
-    desc: "Smart folders, saved views, and tags — so nothing important ever gets lost.",
-  },
-  {
-    icon: Zap,
-    title: "Instant search",
-    desc: "Find any file in milliseconds — by name, contents, tag, owner, or date.",
-  },
-  {
-    icon: CheckCircle2,
-    title: "Version history",
-    desc: "Every save is preserved. Roll back to any version with a single click.",
-  },
-];
-
-function Features() {
+function ShowcaseStrip() {
   return (
-    <section id="features" className="border-b border-border py-24">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-wider text-brand">Features</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Everything you'd expect. Nothing you wouldn't.
+    <section id="showcase" className="border-b border-border py-12 xs:py-16 sm:py-24 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-3 xs:px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8 xs:mb-12 sm:mb-16 max-w-2xl">
+          <p className="text-[10px] xs:text-xs font-medium uppercase tracking-[0.15em] xs:tracking-wider text-brand mb-2 xs:mb-3">
+            Built for the way you work
+          </p>
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl font-semibold tracking-tight">
+            A workspace that fits <br />
+            <span className="font-display italic text-muted-foreground">
+              how your team thinks.
+            </span>
           </h2>
-          <p className="mt-4 text-muted-foreground">
-            A carefully considered set of primitives that scale from solo creator to
-             hundred-person team.
+          <p className="mt-3 xs:mt-4 text-xs xs:text-sm sm:text-base text-muted-foreground leading-relaxed">
+            TeleVault isn't just a file dump — it's a full workspace. Organize files into folders,
+            pin your most-used spaces, and share with a single link. No chaos, no clutter.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="group rounded-2xl border border-border bg-surface p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated"
-            >
-              <div className="mb-4 grid h-10 w-10 place-items-center rounded-xl bg-brand-muted text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
-                <f.icon className="h-5 w-5" strokeWidth={2} />
+        {/* Bento grid */}
+        <div className="grid gap-3 xs:gap-4 lg:grid-cols-5 lg:grid-rows-2">
+          {/* Dashboard preview — spans 3 cols, 2 rows */}
+          <div className="relative overflow-hidden rounded-lg xs:rounded-xl lg:rounded-2xl border border-border bg-surface lg:col-span-3 lg:row-span-2">
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand/10 via-transparent to-transparent" />
+            <div className="p-3 xs:p-4 sm:p-6 pb-0">
+              <p className="text-[10px] xs:text-xs font-medium text-brand uppercase tracking-wider mb-1">Live preview</p>
+              <p className="text-xs xs:text-sm font-semibold text-foreground">Your workspace, beautifully organized</p>
+            </div>
+            <div className="mt-4 xs:mt-6 px-3 xs:px-4 sm:px-6 overflow-hidden">
+              <div className="rounded-t-lg xs:rounded-t-xl border border-border border-b-0 overflow-hidden shadow-elevated">
+                <MockDashboard />
               </div>
-              <h3 className="text-base font-semibold tracking-tight">{f.title}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground">{f.desc}</p>
+            </div>
+          </div>
+
+          {/* Feature pills — right column */}
+          {[
+            {
+              label: "Sidebar navigation",
+              desc: "Pinned spaces, smart folders, and saved views all in one place.",
+              icon: "⌘",
+            },
+            {
+              label: "Command palette",
+              desc: "Jump to any file, action, or setting from anywhere with ⌘K.",
+              icon: "⌨",
+            },
+            {
+              label: "Keyboard-first",
+              desc: "Full keyboard navigation — no mouse required for power users.",
+              icon: "↑",
+            },
+            {
+              label: "Dark & light modes",
+              desc: "Automatically follows your system, or set it manually anytime.",
+              icon: "◑",
+            },
+          ].map((f) => (
+            <div
+              key={f.label}
+              className="group flex items-start gap-3 xs:gap-4 rounded-lg xs:rounded-xl lg:rounded-2xl border border-border bg-surface p-3 xs:p-4 sm:p-5 transition-all hover:-translate-y-0.5 hover:shadow-elevated hover:border-brand/30 lg:col-span-2"
+            >
+              <div className="grid h-7 xs:h-8 sm:h-9 w-7 xs:w-8 sm:w-9 shrink-0 place-items-center rounded-lg xs:rounded-lg border border-border bg-background text-sm xs:text-base font-bold text-brand">
+                {f.icon}
+              </div>
+              <div>
+                <p className="text-xs xs:text-sm font-semibold text-foreground">{f.label}</p>
+                <p className="mt-0.5 text-[10px] xs:text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -216,43 +244,61 @@ function Features() {
   );
 }
 
-function ShowcaseStrip() {
+function CTA() {
   return (
-    <section id="showcase" className="border-b border-border bg-surface/40 py-24">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-brand">
-              A workspace, not a folder
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Organized like your mind.{" "}
-              <span className="font-display italic text-muted-foreground">
-                Not your file system.
-              </span>
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              TeleVault gives you sidebars, saved views, favorites, and shared spaces —
-              the primitives you already use across Notion, Linear, and Figma.
-            </p>
-            <ul className="mt-8 space-y-3 text-sm">
+    <section id="pricing" className="border-b border-border py-12 xs:py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-xl xs:rounded-2xl lg:rounded-[2rem] border border-white/10 bg-gradient-to-br from-foreground via-[#121726] to-[#232a3d] text-background shadow-[0_35px_90px_-35px_rgba(15,23,42,0.4)]">
+          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-brand/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-brand/10 blur-3xl" />
+
+          <div className="relative grid gap-0 lg:grid-cols-2">
+            {/* Left: copy */}
+            <div className="p-6 xs:p-8 sm:p-10 md:p-12 lg:p-14 xl:p-16 flex flex-col justify-center">
+              <p className="text-[10px] xs:text-xs font-medium uppercase tracking-[0.15em] xs:tracking-wider text-brand mb-2 xs:mb-3 sm:mb-4">
+                Get started free
+              </p>
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-semibold tracking-tight text-background">
+                Bring calm to your cloud.
+              </h2>
+              <p className="mt-3 xs:mt-4 text-xs xs:text-sm text-background/60 max-w-sm leading-relaxed">
+                Sign up in seconds. Start with 35 GB free — no credit card required.
+                Upgrade whenever your team grows.
+              </p>
+              <div className="mt-6 xs:mt-8 flex flex-col xs:flex-row gap-2 xs:gap-3">
+                <Button asChild size="sm" variant="secondary" className="rounded-lg xs:rounded-lg text-xs xs:text-sm h-8 xs:h-9">
+                  <Link to="/signup">Create your workspace</Link>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-lg xs:rounded-lg text-xs xs:text-sm text-background hover:bg-background/10 hover:text-background h-8 xs:h-9"
+                >
+                  <Link to="/login">I already have one</Link>
+                </Button>
+              </div>
+              <p className="mt-4 xs:mt-5 text-[10px] xs:text-xs text-background/40">
+                35 GB free · No credit card · Cancel anytime
+              </p>
+            </div>
+
+            {/* Right: stat cards */}
+            <div className="hidden gap-px border-l border-white/10 lg:grid lg:grid-cols-2">
               {[
-                "Sidebar navigation with pinned spaces",
-                "Command palette from anywhere (⌘K)",
-                "Keyboard-first, mouse-optional",
-                "Native light and dark modes",
-              ].map((t) => (
-                <li key={t} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-4 w-4 text-brand" />
-                  <span className="text-muted-foreground">{t}</span>
-                </li>
+                { value: "35 GB", label: "Free storage" },
+                { value: "∞", label: "Collaborators" },
+                { value: "99.9%", label: "Uptime SLA" },
+                { value: "<50ms", label: "Global latency" },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="flex flex-col justify-center border-white/10 p-10 odd:border-r even:border-r-0 [&:nth-child(-n+2)]:border-b"
+                >
+                  <p className="text-3xl sm:text-4xl font-semibold tracking-tight text-background">{s.value}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-background/60">{s.label}</p>
+                </div>
               ))}
-            </ul>
-          </div>
-          <div className="relative">
-            <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-tr from-brand/20 to-transparent blur-2xl" />
-            <div className="glass rounded-3xl p-2 shadow-elevated">
-              <MockDashboard />
             </div>
           </div>
         </div>
@@ -261,52 +307,79 @@ function ShowcaseStrip() {
   );
 }
 
-function CTA() {
+function SiteFooter() {
+  const footerLinks = {
+    Product: ["Features", "Pricing", "Changelog", "Roadmap"],
+    Company: ["About", "Blog", "Careers", "Press"],
+    Legal: ["Privacy", "Terms", "Security", "Cookies"],
+  };
+
   return (
-    <section id="pricing" className="py-24">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-primary p-12 text-center text-primary-foreground shadow-elevated">
-          <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-brand/40 blur-3xl" />
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Bring calm to your cloud.
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-primary-foreground/70">
-            Sign up in seconds. Start with 35 GB free, upgrade whenever you need more.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" variant="secondary" className="rounded-xl">
-              <Link to="/signup">Create your workspace</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="ghost"
-              className="rounded-xl text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-            >
-              <Link to="/login">I already have one</Link>
-            </Button>
+    <footer className="border-t border-border bg-surface/40">
+      {/* Main footer grid */}
+      <div className="mx-auto max-w-7xl px-3 xs:px-4 sm:px-6 lg:px-8 py-10 xs:py-12 sm:py-14">
+        <div className="grid gap-6 xs:gap-8 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Brand column */}
+          <div className="lg:col-span-2">
+            <Logo size="sm" />
+            <p className="mt-3 xs:mt-4 max-w-xs text-xs xs:text-sm text-muted-foreground leading-relaxed">
+              A calm, powerful workspace for your files. Share, sync, and collaborate
+              with your team — without the chaos.
+            </p>
+            <div className="mt-4 xs:mt-6 flex items-center gap-2 xs:gap-3">
+              <a
+                href="#"
+                className="grid h-7 xs:h-8 w-7 xs:w-8 place-items-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:text-foreground hover:border-foreground/20"
+                aria-label="GitHub"
+              >
+                <Github className="h-3 xs:h-3.5 w-3 xs:w-3.5" />
+              </a>
+              {["𝕏", "in"].map((icon) => (
+                <a
+                  key={icon}
+                  href="#"
+                  className="grid h-7 xs:h-8 w-7 xs:w-8 place-items-center rounded-lg border border-border bg-background text-xs font-bold text-muted-foreground transition-colors hover:text-foreground hover:border-foreground/20"
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
           </div>
+
+          {/* Link columns */}
+          {Object.entries(footerLinks).map(([group, links]) => (
+            <div key={group}>
+              <p className="text-xs font-semibold uppercase tracking-wider text-foreground mb-4">
+                {group}
+              </p>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link}>
+                    <a
+                      href="#"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
-  );
-}
 
-function SiteFooter() {
-  return (
-    <footer className="border-t border-border py-10">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
-        <Logo size="sm" />
-        <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} TeleVault. Built with care.
-        </p>
-        <a
-          href="#"
-          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-        >
-          <Github className="h-3.5 w-3.5" />
-          Open source
-        </a>
+      {/* Bottom bar */}
+      <div className="border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 sm:flex-row">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} TeleVault, Inc. All rights reserved.
+          </p>
+          <div className="flex items-center gap-1">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500" />
+            <p className="text-xs text-muted-foreground">All systems operational</p>
+          </div>
+        </div>
       </div>
     </footer>
   );

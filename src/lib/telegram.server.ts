@@ -103,19 +103,47 @@ export async function downloadFile(fileId: string): Promise<{
     );
   }
 
-  // Step 2: download the file bytes from the CDN
+  // Step 2: download the file bytes from the CDN with longer timeout
   const token = requireEnv("TELEGRAM_API_KEY");
-  const dl = await fetch(
-    `https://api.telegram.org/file/bot${token}/${info.result.file_path}`,
-  );
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
-  if (!dl.ok || !dl.body) {
-    throw new Error(`Telegram file download failed [${dl.status}]`);
+  try {
+    const dl = await fetch(
+      `https://api.telegram.org/file/bot${token}/${info.result.file_path}`,
+      { signal: controller.signal }
+    );
+
+    if (!dl.ok || !dl.body) {
+      throw new Error(`Telegram file download failed [${dl.status}]`);
+    }
+
+    // Wrap the stream to handle errors properly
+    const wrappedStream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          const reader = dl.body!.getReader();
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              controller.close();
+              break;
+            }
+            controller.enqueue(value);
+          }
+        } catch (error) {
+          console.error("Stream error during file download:", error);
+          controller.error(error);
+        }
+      }
+    });
+
+    return {
+      body: wrappedStream,
+      contentType: dl.headers.get("content-type") ?? "application/octet-stream",
+      contentLength: dl.headers.get("content-length"),
+    };
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return {
-    body: dl.body,
-    contentType: dl.headers.get("content-type") ?? "application/octet-stream",
-    contentLength: dl.headers.get("content-length"),
-  };
 }

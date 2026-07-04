@@ -10,11 +10,11 @@ import {
   Star,
   Trash2,
   Users,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface FileRow {
@@ -28,7 +28,7 @@ interface FileRow {
   upload_date: string;
 }
 
-const STORAGE_LIMIT_BYTES = 35 * 1024 * 1024 * 1024; // 35 GB per user
+const STORAGE_LIMIT_BYTES = 35 * 1024 * 1024 * 1024;
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 B";
@@ -39,7 +39,7 @@ function formatBytes(bytes: number): string {
 }
 
 const primary = [
-  { to: "/dashboard", label: "Dashboard", icon: Home },
+  { to: "/dashboard", label: "Home", icon: Home },
   { to: "/dashboard/files", label: "My Files", icon: FolderOpen },
   { to: "/dashboard/recent", label: "Recent", icon: Clock },
   { to: "/dashboard/shared", label: "Shared", icon: Share2 },
@@ -52,10 +52,9 @@ const secondary = [
   { to: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 
-export function AppSidebar() {
+export function AppSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  // Query files to get real-time storage info
   const { data: allFiles } = useQuery({
     queryKey: ["files"],
     queryFn: async (): Promise<FileRow[]> => {
@@ -76,50 +75,54 @@ export function AppSidebar() {
 
   const totalBytes = activeFiles.reduce((s, f) => s + f.size, 0);
   const storagePercent = Math.min((totalBytes / STORAGE_LIMIT_BYTES) * 100, 100);
+  const storageLabel = `${formatBytes(totalBytes)} / ${formatBytes(STORAGE_LIMIT_BYTES)}`;
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-surface/60 backdrop-blur-sm lg:flex">
+    <aside className="w-full h-full flex flex-col border-r border-border/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,250,252,0.95))] dark:bg-[linear-gradient(180deg,rgba(16,24,40,0.98),rgba(10,15,26,0.98))] overflow-y-auto shrink-0">
       {/* Logo */}
-      <div className="flex h-16 items-center px-5 border-b border-border/50">
-        <Link to="/" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg">
+      <div className="flex h-[62px] items-center border-b border-border/70 bg-background/70 px-4 backdrop-blur">
+        <Link
+          to="/"
+          className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <Logo />
         </Link>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4" aria-label="Sidebar navigation">
-        <SidebarSection label="Workspace" items={primary} pathname={pathname} />
-        <SidebarSection label="General" items={secondary} pathname={pathname} />
+      {/* Nav */}
+      <nav className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-5" aria-label="Sidebar">
+        <NavGroup label="Workspace" items={primary} pathname={pathname} />
+        <NavGroup label="General" items={secondary} pathname={pathname} />
       </nav>
 
       {/* Storage widget */}
-      <div className="m-3 rounded-2xl border border-border bg-gradient-to-br from-surface to-surface-elevated p-4 shadow-soft">
-        <div className="flex items-center gap-2.5">
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-muted text-brand">
-            <HardDrive className="h-3.5 w-3.5" strokeWidth={2.25} />
+      <div className="mx-3 mb-4 rounded-2xl border border-border/70 bg-gradient-to-br from-brand/12 via-background to-accent/70 p-3.5 shadow-soft">
+        <div className="mb-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="grid h-6 w-6 place-items-center rounded-md bg-brand/10 text-brand">
+              <HardDrive className="h-3 w-3" strokeWidth={2.5} />
+            </div>
+            <span className="text-xs font-medium text-foreground">Storage</span>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-foreground leading-tight">Storage</p>
-            <p className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
-              {formatBytes(totalBytes)} of {formatBytes(STORAGE_LIMIT_BYTES)}
-            </p>
-          </div>
+          <span className="text-[10px] tabular-nums text-muted-foreground">
+            {storagePercent.toFixed(0)}%
+          </span>
         </div>
-        <Progress value={storagePercent} className="mt-3 h-1" />
-        <Button
-          size="sm"
-          variant="secondary"
-          className="mt-3 w-full rounded-lg text-xs h-7 font-medium hover:bg-brand hover:text-brand-foreground transition-colors"
-          asChild
+        <Progress value={storagePercent} className="h-1 mb-2" />
+        <p className="text-[10px] text-muted-foreground">{storageLabel}</p>
+        <Link
+          to="/dashboard/settings"
+          className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-background py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
-          <Link to="/dashboard/settings">Upgrade plan</Link>
-        </Button>
+          <Zap className="h-3 w-3 text-brand" />
+          Upgrade plan
+        </Link>
       </div>
     </aside>
   );
 }
 
-function SidebarSection({
+function NavGroup({
   label,
   items,
   pathname,
@@ -130,41 +133,39 @@ function SidebarSection({
 }) {
   return (
     <div>
-      <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 select-none">
+      <p className="mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 select-none">
         {label}
       </p>
-      <ul className="space-y-0.5" role="list">
+      <ul className="space-y-px" role="list">
         {items.map((item) => {
-          const active = pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to));
+          const active =
+            pathname === item.to ||
+            (item.to !== "/dashboard" && pathname.startsWith(item.to));
           return (
             <li key={item.to}>
               <Link
                 to={item.to}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium outline-none",
-                  "transition-all duration-150 ease-out",
+                  "group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm outline-none transition-all duration-150",
                   "focus-visible:ring-2 focus-visible:ring-ring",
                   active
-                    ? "bg-accent text-foreground shadow-soft"
-                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                    ? "bg-brand/10 font-medium text-foreground shadow-sm ring-1 ring-brand/20"
+                    : "font-normal text-muted-foreground hover:bg-accent/80 hover:text-foreground",
                 )}
               >
-                {/* Active indicator bar */}
-                {active && (
-                  <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-r-full bg-brand animate-scale-in" />
-                )}
                 <item.icon
                   className={cn(
-                    "h-4 w-4 shrink-0 transition-all duration-150",
-                    active
-                      ? "text-brand"
-                      : "text-muted-foreground/70 group-hover:text-foreground group-hover:scale-110",
+                    "h-[15px] w-[15px] shrink-0 transition-colors duration-150",
+                    active ? "text-brand" : "text-muted-foreground/60 group-hover:text-foreground",
                   )}
-                  strokeWidth={active ? 2.25 : 2}
+                  strokeWidth={active ? 2.25 : 1.75}
                   aria-hidden="true"
                 />
-                <span className="truncate">{item.label}</span>
+                <span className="truncate leading-none">{item.label}</span>
+                {active && (
+                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-brand" />
+                )}
               </Link>
             </li>
           );
